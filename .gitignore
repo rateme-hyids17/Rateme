@@ -9,3 +9,5 @@ venv/*
 src/__pycache__
 *.idea
 *.pyc
+
+test_bot.cfg
