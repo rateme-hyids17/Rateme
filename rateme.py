@@ -21,5 +21,4 @@ username = config.get("redditapi", "username")
 
 # Test our reddit parser
 reddit = RedditParser(client_id, client_secret, password, user_agent, username)
-reddit.test()
-reddit.test2()
+reddit.parse_rateme()
