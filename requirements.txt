@@ -1,2 +1,10 @@
 # There will be required python libraries
 praw
+numpy
+scipy
+matplotlib
+ipython
+jupyter
+pandas
+sympy
+nose
