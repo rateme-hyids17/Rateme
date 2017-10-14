@@ -1,5 +1,6 @@
 import configparser
 from src.redditparser import *
+import pandas as pd
 
 # This is the main script to manage all the other elements
 
@@ -21,4 +22,4 @@ username = config.get("redditapi", "username")
 
 # Test our reddit parser
 reddit = RedditParser(client_id, client_secret, password, user_agent, username)
-reddit.parse_rateme()
+reddit.parse_rateme(query_level=reddit.query_level('1week'))
