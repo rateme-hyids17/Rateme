@@ -102,15 +102,18 @@ class RedditParser:
         :return: Returns tuple of (created, comment_karma, link_karma, verified, is_gold, is_mod, is_employee)
         """
         # Get the about.json of the user
-        data = self.reddit.get('user/{}/about.json'.format(username))
-        created, comment_karma, link_karma, verified_email, is_gold, is_mod, is_employee = data.created_utc,\
-                                                                                     data.comment_karma,\
-                                                                                     data.link_karma,\
-                                                                                     data.has_verified_email,\
-                                                                                     data.is_gold,\
-                                                                                     data.is_mod,\
-                                                                                     data.is_employee
-        return created, comment_karma, link_karma, verified_email, is_gold, is_mod, is_employee
+        try:
+            data = self.reddit.get('user/{}/about.json'.format(username))
+            created, comment_karma, link_karma, verified_email, is_gold, is_mod, is_employee = data.created_utc,\
+                                                                                         data.comment_karma,\
+                                                                                         data.link_karma,\
+                                                                                         data.has_verified_email,\
+                                                                                         data.is_gold,\
+                                                                                         data.is_mod,\
+                                                                                         data.is_employee
+            return created, comment_karma, link_karma, verified_email, is_gold, is_mod, is_employee
+        except:
+            return '','','','','','',''
 
     def get_agegender(self, title):
         """
@@ -202,10 +205,17 @@ class RedditParser:
             if score == 0.0:
                 continue
             # This could have some bugs, I havent checked thoroughly
+<<<<<<< HEAD
             try:
                 created, comment_karma, link_karma,\
                 verified_email, is_gold, is_mod, is_employee = self.get_aboutuser(submission.author)
             except:
+=======
+            created, comment_karma, link_karma,\
+            verified_email, is_gold, is_mod, is_employee = self.get_aboutuser(submission.author)
+            if created=='' or comment_karma=='' or link_karma==''\
+                    or verified_email=='' or is_gold=='' or is_mod=='' or is_employee=='':
+>>>>>>> 31567c5cc27fa34bd856c66c6250d65f5110d616
                 continue
             # Store the media into a folder
             fullpath = os.path.join(os.path.abspath('data/images'), str(id) + '.jpg')
