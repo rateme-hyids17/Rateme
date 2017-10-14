@@ -205,17 +205,10 @@ class RedditParser:
             if score == 0.0:
                 continue
             # This could have some bugs, I havent checked thoroughly
-<<<<<<< HEAD
             try:
                 created, comment_karma, link_karma,\
                 verified_email, is_gold, is_mod, is_employee = self.get_aboutuser(submission.author)
             except:
-=======
-            created, comment_karma, link_karma,\
-            verified_email, is_gold, is_mod, is_employee = self.get_aboutuser(submission.author)
-            if created=='' or comment_karma=='' or link_karma==''\
-                    or verified_email=='' or is_gold=='' or is_mod=='' or is_employee=='':
->>>>>>> 31567c5cc27fa34bd856c66c6250d65f5110d616
                 continue
             # Store the media into a folder
             fullpath = os.path.join(os.path.abspath('data/images'), str(id) + '.jpg')
