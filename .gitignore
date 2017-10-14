@@ -11,3 +11,5 @@ src/__pycache__
 *.pyc
 
 test_bot.cfg
+
+data/
