@@ -10,3 +10,4 @@ sympy
 nose
 opencv-python
 tensorflow
+tpot

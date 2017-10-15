@@ -9,13 +9,42 @@ def create_folder(folder):
         shutil.rmtree(folder, ignore_errors=True)
     os.mkdir(folder)
 
+def find_face(image):
+    """Image has to be grayscale. Returns largest face found."""
+    face_cascade = cv2.CascadeClassifier('haar_xml/haarcascade_frontalface_default.xml')
+
+    # Detect face
+    faces = face_cascade.detectMultiScale(
+        image,
+        scaleFactor=1.05,
+        minNeighbors=8,
+        minSize=(55, 55),
+        flags=cv2.CASCADE_SCALE_IMAGE
+    )
+
+    if len(faces) == 0:
+        return None, None, None, None
+
+    # Find largest detected face
+    largest = faces[0]
+    largest_size = largest[2] * largest[3]
+    for (x, y, w, h) in faces[1:]:
+        size = w * h
+        if size > largest_size:
+            largest = (x, y, w, h)
+            largest_size = size
+
+    x, y, w, h = largest
+    return x, y, w, h
+
+
 if __name__ == '__main__':
     df = pd.read_csv('../data/users.csv')
 
     # Create cascade classifiers
     feature_cascade = cv2.CascadeClassifier('haar_xml/haarcascade_smile.xml')
     # feature_cascade = cv2.CascadeClassifier('haar_xml/haarcascade_eye_tree_eyeglasses.xml')
-    face_cascade = cv2.CascadeClassifier('haar_xml/haarcascade_frontalface_default.xml')
+
 
     # Create folders for images based on if feature is detected
     create_folder('../data/haar_testing')
@@ -29,28 +58,9 @@ if __name__ == '__main__':
         im = cv2.imread(row.image_path)
         gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
 
-        #Detect face
-        faces = face_cascade.detectMultiScale(
-            gray,
-            scaleFactor=1.05,
-            minNeighbors=8,
-            minSize=(55, 55),
-            flags=cv2.CASCADE_SCALE_IMAGE
-        )
-
-        if len(faces) == 0:
+        x, y, w, h = find_face(gray)
+        if x is None:
             continue
-
-        # Find largest detected face
-        largest = faces[0]
-        largest_size = largest[2] * largest[3]
-        for (x, y, w, h) in faces[1:]:
-            size = w * h
-            if size > largest_size:
-                largest = (x, y, w, h)
-                largest_size = size
-
-        x, y, w, h = largest
 
         # Draw rectangle around face
         cv2.rectangle(im, (x, y), (x + w, y + h), (0, 0, 255), 2)
