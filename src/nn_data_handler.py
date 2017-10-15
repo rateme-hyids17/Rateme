@@ -3,6 +3,7 @@ import os
 import shutil
 import pandas as pd
 import numpy as np
+import cv2
 
 
 if __name__ == '__main__':
@@ -20,5 +21,8 @@ if __name__ == '__main__':
     for index, row in df.iterrows():
         if row.gender == 'M':
             score = int(np.round(row.score))
+            im = cv2.imread(row.image_path)
+            gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
             fname = os.path.split(row.image_path)[1]
-            shutil.copyfile(row.image_path, os.path.join(folder, str(score), fname))
+            #shutil.copyfile(row.image_path, os.path.join(folder, str(score), fname))
+            cv2.imwrite(os.path.join(folder, str(score), fname), gray)
