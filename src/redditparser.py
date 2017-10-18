@@ -192,6 +192,7 @@ class RedditParser:
         :return: Returns number of the people has been parsed (int)
         """
         subreddit = self.reddit.subreddit('Rateme')
+        query_level = self.query_level(query_level)
         id = 1
         # TODO: Give optional dates in argument
         now = int(time.time())
@@ -211,8 +212,8 @@ class RedditParser:
             except:
                 continue
             # Store the media into a folder
-            fullpath = os.path.join(os.path.abspath('data/images'), str(id) + '.jpg')
-            res = self.store_media(submission, fullpath)
+            relpath = os.path.join(os.path.relpath('data/images'), str(id) + '.jpg')
+            res = self.store_media(submission, relpath)
             if not res:
                 continue
             # Show some result
@@ -227,7 +228,7 @@ class RedditParser:
                     'score': format(score, '.3f'), 'gender': gender, 'created_epoch': created,
                     'comment_karma': comment_karma, 'link_karma': link_karma, 'is_gold': is_gold,
                     'is_mod': is_mod, 'is_employee': is_employee, 'verified_email': verified_email,
-                    'image_path' : fullpath}
+                    'image_path' : relpath}
             # Save it into the list
             self.users.append(user)
             id += 1
