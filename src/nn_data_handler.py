@@ -22,7 +22,7 @@ if __name__ == '__main__':
         if row.gender == 'M':
             score = int(np.round(row.score))
             im = cv2.imread(row.image_path)
-            gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
+            # gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
             fname = os.path.split(row.image_path)[1]
-            #shutil.copyfile(row.image_path, os.path.join(folder, str(score), fname))
-            cv2.imwrite(os.path.join(folder, str(score), fname), gray)
+            shutil.copyfile('../' + row.image_path, os.path.join(folder, str(score), fname))
+            # cv2.imwrite(os.path.join(folder, str(score), fname), gray)
