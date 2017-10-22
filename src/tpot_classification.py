@@ -5,9 +5,12 @@ import os
 from tpot import TPOTRegressor
 import numpy as np
 from sklearn.utils import shuffle
+from sklearn.decomposition import PCA
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
+
 
 class TpotClassifier():
-    def __init__(self, data_path, gabor=False):
+    def __init__(self, data_path, gabor=False, reduction_method=None):
         """
         :param data_path:
             Path to the folder that has the image folder and users.csv
@@ -16,6 +19,8 @@ class TpotClassifier():
             Making the data set takes a long time.
         :param gabor:
             This determines if gabor filter is used in training.
+        :param reduction_method:
+            Which method to use for dimensionality reduction. Supported types are 'pca' and 'lda'.
         """
         self.regressor = TPOTRegressor(generations=5, population_size=20, verbosity=2, config_dict='TPOT light')
         self.gabor = gabor
@@ -23,6 +28,9 @@ class TpotClassifier():
         self.filters = None
         if self.gabor:
             self.filters = self.build_filters()
+        self.reduction_method = reduction_method
+        self.pca = PCA(n_components=2048)
+        self.lda = LDA()
 
     @staticmethod
     def create_data(data_path):
@@ -71,6 +79,7 @@ class TpotClassifier():
 
         imgs = np.array(imgs)
         labels = np.array(labels)
+
         imgs, labels = shuffle(imgs, labels)
 
         train_len = int(len(imgs) * 0.8)
@@ -78,6 +87,15 @@ class TpotClassifier():
         train_labels = labels[:train_len]
         test_data = imgs[train_len:]
         test_labels = labels[train_len:]
+
+        if self.reduction_method == 'pca':
+            self.pca.fit(train_data)
+            train_data = self.pca.transform(train_data)
+            test_data = self.pca.transform(test_data)
+        elif self.reduction_method == 'lda':
+            self.lda.fit(train_data, np.round(train_labels))
+            train_data = self.lda.transform(train_data)
+            test_data = self.lda.transform(test_data)
 
         self.regressor.fit(train_data, train_labels)
 
@@ -108,6 +126,12 @@ class TpotClassifier():
 
         roi_gray = gray[y:y + h, x:x + w]
         resized = cv2.resize(roi_gray, (64, 64)).flatten()
+
+        if self.reduction_method == 'pca':
+            resized = self.pca.transform([resized])[0]
+        elif self.reduction_method == 'lda':
+            resized = self.lda.transform([resized])[0]
+
         return self.regressor.predict(np.array([resized]))[0]
 
     def build_filters(self):
@@ -139,7 +163,7 @@ if __name__ == '__main__':
     # Create data and classifier
     if not os.path.exists(os.path.join(data_path, 'faces')):
         TpotClassifier.create_data(data_path)
-    classifier = TpotClassifier(data_path)
+    classifier = TpotClassifier(data_path, reduction_method='pca')
 
     # Train the model
     acc, wthn_1_acc, mean_sqrt_error = classifier.train()
