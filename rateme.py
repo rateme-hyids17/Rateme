@@ -1,28 +1,39 @@
 import argparse
 import configparser
 from src.redditparser import *
-
+from src.NN_classifier import *
+from src.tpot_classification import *
 
 if __name__ == "__main__":
     # Defaults
     query_level = "1year"
     mode = "scrap"
-    # TODO: add optional values for other modes: train, predict, live
+    image_path = ""
+
+    # Add argument parsers
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
+    # Query level for the redditparser.py
     parser.add_argument("-q", "--query_level",
                         help="The query level for scraping submissions from reddit/r/Rateme. (DEFAULT: -q 1year)\n"
                              "Available values: 1day, 1week, 1month, 3months, 6months, 1year, 3years.\n\n")
-    parser.add_argument("-m", "--application_mode",
-                        help="Choose application mode to perform. (DEFAULT: -m scrap)\n"
-                             "Available values: scrap, train, predict, live.\n\n")
+    # Application modes
+    parser.add_argument("-a", "--application_mode",
+                        help="Choose application mode to perform. (DEFAULT: -a scrap)\n"
+                             "Available values: scrap, tpot, nn.\n\n")
+    # Method selection for the train and predict
+    parser.add_argument("-i", "--image",
+                        help="Image path to be predicted.\n\n")
+
     # Parse arguments
     args = parser.parse_args()
 
     # Ensure they are in correct format
     if args.query_level and args.query_level in ["1day", "1week", "1month", "3months", "6months", "1year", "3years"]:
         query_level = args.query_level
-    if args.application_mode and args.application_mode in ["scrap", "train", "predict", "live"]:
+    if args.application_mode and args.application_mode in ["scrap", "tpot", "nn"]:
         mode = args.application_mode
+    if args.image:
+        image_path = args.image
 
     # Run according to the application modes
     if mode == "scrap":
@@ -49,3 +60,38 @@ if __name__ == "__main__":
             reddit.parse_rateme(query_level)
         except:
             raise Exception("Check your reddit_api.cfg. Reddit agent failed")
+    elif mode == "tpot":
+        # Tpot training here
+        # Create data and classifier
+        if not os.path.exists(os.path.join(data_path, 'faces')):
+            print("Creating face images...")
+            TpotClassifier.create_data(data_path)
+        print("Tries to find best regressor. This process can take long time.")
+        classifier = TpotClassifier(data_path, reduction_method='pca')
+        # Train the model
+        acc, wthn_1_acc, mean_sqrt_error = classifier.train()
+        print('Accuracy: ' + str(acc))
+        print('Within 1 accuracy: ' + str(wthn_1_acc))
+        print('Average distance: ' + str(np.sqrt(mean_sqrt_error)))
+        # Predict an image
+        image = cv2.imread(image_path)
+        prediction = classifier.predict(image)
+        if prediction is None:
+            print('Face not found.')
+        else:
+            print('Prediction: ' + str(prediction))
+    elif mode == "nn":
+        try:
+            # Predict using NN
+            classifier = NeuralClassifier(network_path='src/network/output_labels.txt',
+                                          label_path='src/network/neural_network.pb')
+            if os.path.exists(image_path):
+                image = cv2.imread(image_path)
+                label, scores = classifier.predict(image)
+                print('Prediction: ' + str(label))
+                for label, score in scores:
+                    print('{} (score = {})'.format(label, score))
+        except:
+            raise Exception("Error in neural network classifier")
+    else:
+        raise Exception("Please select available application modes")

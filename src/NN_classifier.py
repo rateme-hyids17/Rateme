@@ -43,7 +43,7 @@ class NeuralClassifier():
 
 if __name__ == '__main__':
     classifier = NeuralClassifier(network_path='network/output_labels.txt', label_path='network/neural_network.pb')
-    image = cv2.imread('/home/ottohant/test.jpg')
+    image = cv2.imread('/home/osboxes/Rateme/data/images/1.jpg')
     label, scores = classifier.predict(image)
     print('Prediction: ' + str(label))
     for label, score in scores:

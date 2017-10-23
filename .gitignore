@@ -13,4 +13,4 @@ src/__pycache__
 test_bot.cfg
 
 data/
-neural_network.pb
+#neural_network.pb

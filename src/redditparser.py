@@ -194,7 +194,6 @@ class RedditParser:
         subreddit = self.reddit.subreddit('Rateme')
         query_level = self.query_level(query_level)
         id = 1
-        # TODO: Give optional dates in argument
         now = int(time.time())
         for submission in subreddit.submissions(now - query_level, now):
             # Get age and gender from the submisson title
