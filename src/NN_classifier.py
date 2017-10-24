@@ -5,6 +5,8 @@ import cv2
 class NeuralClassifier():
     def __init__(self, network_path, label_path):
         """
+        Uses a neural network to predict attractiveness of a picture of a human.
+
         :param network_path:
             Path to the saved neural network.
         :param label_path:
@@ -23,7 +25,7 @@ class NeuralClassifier():
 
 
     def predict(self, image):
-        """Reads an image and returns a list of labels and scores in descending order"""
+        """Reads an image and returns a list of labels and scores in descending order."""
 
         # Run classification
         with tf.Session() as sess:

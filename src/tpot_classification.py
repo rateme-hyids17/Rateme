@@ -12,6 +12,8 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 class TpotClassifier():
     def __init__(self, data_path, gabor=False, reduction_method=None):
         """
+        Trains a machine learning model with tpot,
+        which can then be used to predict attractiveness of pictures of humans.
         :param data_path:
             Path to the folder that has the image folder and users.csv
         :param make_data_set:
@@ -63,6 +65,11 @@ class TpotClassifier():
         new_df.to_csv(os.path.join(data_path, 'faces.csv'))
 
     def train(self):
+        """
+        Uses tpot to train a machine learning model to predict attractiveness of pictures of human faces.
+        :return:
+            Various accuracy measures.
+        """
         df = pd.read_csv(os.path.join(self.data_path, 'faces.csv'))
 
         imgs = []
@@ -116,6 +123,13 @@ class TpotClassifier():
         return accuracy, within_1_accuracy, mean_sqrt_error
 
     def predict(self, image):
+        """
+        Predicts the attractiveness of a picture with a human in it.
+        :param image:
+            The image with the human in it.
+        :return:
+            The prediction.
+        """
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         x, y, w, h = find_face(gray)
         if x is None:
