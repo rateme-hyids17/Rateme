@@ -11,7 +11,7 @@ def create_folder(folder):
 
 def find_face(image):
     """Image has to be grayscale. Returns largest face found."""
-    face_cascade = cv2.CascadeClassifier('haar_xml/haarcascade_frontalface_default.xml')
+    face_cascade = cv2.CascadeClassifier('src/haar_xml/haarcascade_frontalface_default.xml')
 
     # Detect face
     faces = face_cascade.detectMultiScale(

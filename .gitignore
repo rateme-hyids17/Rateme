@@ -12,5 +12,9 @@ src/__pycache__
 
 test_bot.cfg
 
-data/
+data/faces
+data/haar_testing
+data/images
+data/nn
+data/*.csv
 #neural_network.pb

@@ -7,7 +7,7 @@ import numpy as np
 from sklearn.utils import shuffle
 from sklearn.decomposition import PCA
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
-
+from sklearn.externals import joblib
 
 class TpotClassifier():
     def __init__(self, data_path, gabor=False, reduction_method=None):
@@ -97,14 +97,17 @@ class TpotClassifier():
 
         if self.reduction_method == 'pca':
             self.pca.fit(train_data)
+            joblib.dump(self.pca, os.path.join(self.data_path, 'fitted_pca.pkl'))
             train_data = self.pca.transform(train_data)
             test_data = self.pca.transform(test_data)
         elif self.reduction_method == 'lda':
             self.lda.fit(train_data, np.round(train_labels))
+            joblib.dump(self.lda, os.path.join(self.data_path, 'fitted_lda.pkl'))
             train_data = self.lda.transform(train_data)
             test_data = self.lda.transform(test_data)
 
         self.regressor.fit(train_data, train_labels)
+        joblib.dump(self.regressor.fitted_pipeline_, os.path.join(self.data_path, 'fitted_tpot.pkl'))
 
         # Calculate test accuracy
         rounded_labels = np.round(test_labels)
@@ -170,25 +173,18 @@ class TpotClassifier():
             np.maximum(accum, fimg, accum)
         return accum
 
+    def load(self):
+        """
+        Loads the fitted tpot models into usage
 
-if __name__ == '__main__':
-    data_path = '../data'
-
-    # Create data and classifier
-    if not os.path.exists(os.path.join(data_path, 'faces')):
-        TpotClassifier.create_data(data_path)
-    classifier = TpotClassifier(data_path, reduction_method='pca')
-
-    # Train the model
-    acc, wthn_1_acc, mean_sqrt_error = classifier.train()
-    print('Accuracy: ' + str(acc))
-    print('Within 1 accuracy: ' + str(wthn_1_acc))
-    print('Average distance: ' + str(np.sqrt(mean_sqrt_error)))
-
-    # Predict an image
-    image = cv2.imread('/home/ottohant/test.jpg')
-    prediction = classifier.predict(image)
-    if prediction is None:
-        print('Face not found.')
-    else:
-        print('Prediction: ' + str (prediction))
+        :return: None
+        """
+        try:
+            if os.path.exists(os.path.join(self.data_path, 'fitted_tpot.pkl')):
+                self.regressor.fitted_pipeline_ = joblib.load(os.path.join(self.data_path, 'fitted_tpot.pkl'))
+            if os.path.exists(os.path.join(self.data_path, 'fitted_pca.pkl')):
+                self.pca = joblib.load(os.path.join(self.data_path, 'fitted_pca.pkl'))
+            if os.path.exists(os.path.join(self.data_path, 'fitted_lda.pkl')):
+                self.lda = joblib.load(os.path.join(self.data_path, 'fitted_lda.pkl'))
+        except:
+            raise Exception('Fitted model does not exist under Rateme/src')

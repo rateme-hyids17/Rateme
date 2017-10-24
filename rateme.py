@@ -1,5 +1,7 @@
 import argparse
 import configparser
+
+from mpmath.functions.functions import im
 from src.redditparser import *
 from src.NN_classifier import *
 from src.tpot_classification import *
@@ -7,8 +9,9 @@ from src.tpot_classification import *
 if __name__ == "__main__":
     # Defaults
     query_level = "1year"
-    mode = "scrap"
+    mode = "tpot"
     image_path = ""
+    train_from_scratch = False
 
     # Add argument parsers
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
@@ -24,6 +27,8 @@ if __name__ == "__main__":
     parser.add_argument("-i", "--image",
                         help="Image path to be predicted.\n\n")
 
+    parser.add_argument("-t", "--train_scratch", action='store_true',
+                        help="Train tpot from scratch.\n\n")
     # Parse arguments
     args = parser.parse_args()
 
@@ -34,6 +39,8 @@ if __name__ == "__main__":
         mode = args.application_mode
     if args.image:
         image_path = args.image
+    if args.train_scratch:
+        train_from_scratch = True
 
     # Run according to the application modes
     if mode == "scrap":
@@ -62,17 +69,21 @@ if __name__ == "__main__":
             raise Exception("Check your reddit_api.cfg. Reddit agent failed")
     elif mode == "tpot":
         # Tpot training here
-        # Create data and classifier
-        if not os.path.exists(os.path.join(data_path, 'faces')):
-            print("Creating face images...")
-            TpotClassifier.create_data(data_path)
-        print("Tries to find best regressor. This process can take long time.")
-        classifier = TpotClassifier(data_path, reduction_method='pca')
-        # Train the model
-        acc, wthn_1_acc, mean_sqrt_error = classifier.train()
-        print('Accuracy: ' + str(acc))
-        print('Within 1 accuracy: ' + str(wthn_1_acc))
-        print('Average distance: ' + str(np.sqrt(mean_sqrt_error)))
+        classifier = TpotClassifier('data/', reduction_method='pca')
+        # Check the train from scratch argument
+        if train_from_scratch:
+            # Train the model
+            if not os.path.exists('data/faces'):
+                print("Creating face images...")
+                TpotClassifier.create_data('data/')
+            print("Trying to find best regressor. This process can take long time.")
+            acc, wthn_1_acc, mean_sqrt_error = classifier.train()
+            print('Accuracy: ' + str(acc))
+            print('Within 1 accuracy: ' + str(wthn_1_acc))
+            print('Average distance: ' + str(np.sqrt(mean_sqrt_error)))
+        else:
+            classifier.load()
+
         # Predict an image
         image = cv2.imread(image_path)
         prediction = classifier.predict(image)
