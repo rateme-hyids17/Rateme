@@ -22,12 +22,21 @@ Rateme's API can be found at:
 
 Summary
 =======
-* Goal
-* Methods we used
-* Results we get
-* Refer to analysis
-* Some future work
+**Goal**
 
+RateMe is a trial project developed for evaluating the image attractiveness. Using this service, people could upload their images and get a private objective score. In that way, users could obtain the most likely rating before post their photos on social media.
+
+**Methods we used**
+
+RateMe’ design allows to perform a scientific look evaluation. The score is calculated based on more than 7500 images from scraped from reddit. We used tpot and tensor flow to implement machine learning algorithms and analise the relation between image’ features and score obtained. Then, with this information we predict the score for new inputs.
+
+**Analysis and results**
+
+First results reveal the complexity of performing a good evaluation, given the highly different kind of images uploaded by the users. The accuracy of the results was enhanced when we focused just on user’s face and applying gray-scale filter. The analysis also exposed the relation between photo’s comments and score given the gender.  
+
+**Future work**
+
+RateMe could be used to predict image score, but also to find insights about social patterns related with the gender and age.  Future work could include also extend the application to suggest users how to improve their photos to have higher ratings or help users to choose best image for CV or profile picture.
 
 Setup
 =====
@@ -100,7 +109,15 @@ Last example will predict the given image using Neural Network:
 
 Results
 =======
-Our approach gives this result, here are some future considerations.
+Our goal was to fit a machine learning model to a data set of pictures with ratings as labels, in order to predict the attractivness of new pictures. Only male images were used in the training, because attractivness criteria might differ between the sexes and almost all images were male.
+
+First we tried to retrain the last layer of a neural network called Inception-v3 (https://www.tensorflow.org/tutorials/image_recognition), that is trained to recognize a 1000 different object classes in images. We used a retrainer provided by TensorFlow for the task (https://www.tensorflow.org/tutorials/image_retraining). The images were divided into classes from 3 to 9 based on the rounded rating. Classes 1, 2 and 10 were omitted due to lack of samples. The resulting neural network got a 20% test accuracy, which wasn't great, but still better than a completely random guess of 14%.
+
+We also tried if tpot could find a good regressor for the task. For this we extracted the faces from the images using a Haar Cascades (https://docs.opencv.org/master/d7/d8b/tutorial_py_face_detection.html) and transformed the faces into 64x64 grayscale images. For this data tpot achieved average distance from the true score of 1.31 in the test set. We also used the rounded prediction and compared it to the rounded true label to get a similar accuracy measure to the neural network, reaching 27%, which is way better than the network's 20%. This might be due to overfitting though, because most of the images were concentrated in just a couple of classes (6, 7 and 8). The tpot's chosen model was RidgeCV.
+
+In addition we experimented with dimensionality reduction on the data before learning with tpot, because a 64x64 grayscale image has 4096 features, and all of the are probably not that important. The reduction methods used were PCA (with 50, 1000 and 2048 components) and linear discriminant analysis, but both produced worse results than the raw data with all 4096 features.
+
+Our next idea was to extract features, such as does the image have a smile, using Haar Cascades. Then we could do analysis of what kind of features attractive images tend to have. This failed however, because the Haar Cascades did a horrible job. Only the face detection really works and even then you have to select the largest face found, because the classifier finds faces in all kinds of weird places.
 
 Analysis
 ========
