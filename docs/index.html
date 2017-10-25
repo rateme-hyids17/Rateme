@@ -1,0 +1,231 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Welcome to Rateme’s Documentation &#8212; Rateme  documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">Rateme  documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="toctree-wrapper compound">
+</div>
+<div class="section" id="welcome-to-rateme-s-documentation">
+<h1>Welcome to Rateme’s Documentation<a class="headerlink" href="#welcome-to-rateme-s-documentation" title="Permalink to this headline">¶</a></h1>
+</div>
+<div class="section" id="source-code-documentation">
+<h1>Source code documentation<a class="headerlink" href="#source-code-documentation" title="Permalink to this headline">¶</a></h1>
+<p>Rateme’s API can be found at:</p>
+<ul class="simple">
+<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
+<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
+</ul>
+</div>
+<div class="section" id="summary">
+<h1>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li>Goal</li>
+<li>Methods we used</li>
+<li>Results we get</li>
+<li>Refer to analysis</li>
+<li>Some future work</li>
+</ul>
+</div>
+<div class="section" id="setup">
+<h1>Setup<a class="headerlink" href="#setup" title="Permalink to this headline">¶</a></h1>
+<p>Rateme can be installed from scratch using the following commands:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">rateme</span><span class="o">-</span><span class="n">hyids17</span><span class="o">/</span><span class="n">Rateme</span><span class="o">.</span><span class="n">git</span>
+<span class="n">cd</span> <span class="n">Rateme</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
+<p><strong>We have tested our program in:</strong></p>
+<ul class="simple">
+<li>Linux Ubuntu 16.x, 17.x, MacOS Sierra</li>
+<li>Python 3.5.x 64 bits (tensorflow requires 64bits)</li>
+</ul>
+<p>We anticipate that the program also works in other OS(s), but there might be some problems due to 3rd party python package installations. For example, in Windows some of the modules require installation by wheel (pip fails).</p>
+<p><strong>Reddit API</strong></p>
+<p>In order to scrap data from reddit, you must have an access to Reddit API. Once you have it, you have to fill the required fields in <code class="docutils literal"><span class="pre">reddit_api.cfg</span></code> inside the Rateme folder.</p>
+<p>This tutorial presents the procedure to get the Reddit API access <a class="reference external" href="http://pythonforengineers.com/build-a-reddit-bot-part-1/">Reddit API</a>.</p>
+</div>
+<div class="section" id="running-options">
+<h1>Running options<a class="headerlink" href="#running-options" title="Permalink to this headline">¶</a></h1>
+<p>User can check all the available options using:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">rateme</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+</div>
+<p>This will show all the available arguments and values for usage:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">rateme</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">q</span> <span class="n">QUERY_LEVEL</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">a</span> <span class="n">APPLICATION_MODE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">i</span> <span class="n">IMAGE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">t</span><span class="p">]</span>
+
+<span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
+ <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>
+           <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
+
+ <span class="o">-</span><span class="n">q</span> <span class="n">QUERY_LEVEL</span><span class="p">,</span> <span class="o">--</span><span class="n">query_level</span> <span class="n">QUERY_LEVEL</span>
+           <span class="n">The</span> <span class="n">query</span> <span class="n">level</span> <span class="k">for</span> <span class="n">scraping</span> <span class="n">submissions</span> <span class="kn">from</span> <span class="nn">reddit</span><span class="o">/</span><span class="n">r</span><span class="o">/</span><span class="n">Rateme</span><span class="o">.</span> <span class="p">(</span><span class="n">DEFAULT</span><span class="p">:</span> <span class="o">-</span><span class="n">q</span> <span class="mi">1</span><span class="n">year</span><span class="p">)</span>
+           <span class="n">Available</span> <span class="n">values</span><span class="p">:</span> <span class="mi">1</span><span class="n">day</span><span class="p">,</span> <span class="mi">1</span><span class="n">week</span><span class="p">,</span> <span class="mi">1</span><span class="n">month</span><span class="p">,</span> <span class="mi">3</span><span class="n">months</span><span class="p">,</span> <span class="mi">6</span><span class="n">months</span><span class="p">,</span> <span class="mi">1</span><span class="n">year</span><span class="p">,</span> <span class="mi">3</span><span class="n">years</span><span class="o">.</span>
+
+ <span class="o">-</span><span class="n">a</span> <span class="n">APPLICATION_MODE</span><span class="p">,</span> <span class="o">--</span><span class="n">application_mode</span> <span class="n">APPLICATION_MODE</span>
+           <span class="n">Choose</span> <span class="n">application</span> <span class="n">mode</span> <span class="n">to</span> <span class="n">perform</span><span class="o">.</span> <span class="p">(</span><span class="n">DEFAULT</span><span class="p">:</span> <span class="o">-</span><span class="n">a</span> <span class="n">scrap</span><span class="p">)</span>
+           <span class="n">Available</span> <span class="n">values</span><span class="p">:</span> <span class="n">scrap</span><span class="p">,</span> <span class="n">tpot</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span>
+
+ <span class="o">-</span><span class="n">i</span> <span class="n">IMAGE</span><span class="p">,</span> <span class="o">--</span><span class="n">image</span> <span class="n">IMAGE</span>
+           <span class="n">Image</span> <span class="n">path</span> <span class="n">to</span> <span class="n">be</span> <span class="n">predicted</span><span class="o">.</span>
+
+ <span class="o">-</span><span class="n">t</span><span class="p">,</span> <span class="o">--</span><span class="n">train_scratch</span>
+           <span class="n">Train</span> <span class="n">tpot</span> <span class="kn">from</span> <span class="nn">scratch.</span>
+</pre></div>
+</div>
+<p><strong>Examples:</strong></p>
+<p>The following will scrap 3 years of data from reddit.com/r/Rateme subreddit:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">rateme</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">a</span> <span class="n">scrap</span> <span class="o">-</span><span class="n">q</span> <span class="mi">3</span><span class="n">years</span>
+</pre></div>
+</div>
+<p>Second example will train tpot pipeline from scratch and it will predict on given image:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">rateme</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">a</span> <span class="n">tpot</span> <span class="o">-</span><span class="n">t</span> <span class="o">-</span><span class="n">i</span> <span class="n">image</span><span class="o">/</span><span class="n">test</span><span class="o">.</span><span class="n">jpg</span>
+</pre></div>
+</div>
+<p>Third example will predict the given image using already fitted pipeline in tpot:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">rateme</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">a</span> <span class="n">tpot</span> <span class="o">-</span><span class="n">i</span> <span class="n">image</span><span class="o">/</span><span class="n">test</span><span class="o">.</span><span class="n">jpg</span>
+</pre></div>
+</div>
+<p>Last example will predict the given image using Neural Network:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">rateme</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">a</span> <span class="n">nn</span> <span class="o">-</span><span class="n">i</span> <span class="n">image</span><span class="o">/</span><span class="n">test</span><span class="o">.</span><span class="n">jpg</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="results">
+<h1>Results<a class="headerlink" href="#results" title="Permalink to this headline">¶</a></h1>
+<p>Our approach gives this result, here are some future considerations.</p>
+</div>
+<div class="section" id="analysis">
+<h1>Analysis<a class="headerlink" href="#analysis" title="Permalink to this headline">¶</a></h1>
+<dl class="docutils">
+<dt>We have collected information from users for different periods of time:</dt>
+<dd><ul class="first last simple">
+<li>1 day</li>
+<li>1 week</li>
+<li>1 month</li>
+<li>3 months</li>
+<li>6 months</li>
+<li>1 year</li>
+<li>3 years</li>
+</ul>
+</dd>
+</dl>
+<p>We started analysing the original data distributions to identify common patterns, outliers and the minimum number of samples necessary to perform the prediction.</p>
+<div class="figure align-center" id="id1">
+<a class="reference internal image-reference" href="images/1.png"><img alt="map to buried treasure" src="images/1.png" style="width: 500px; height: 400px;" /></a>
+<p class="caption"><span class="caption-text"><em>Figure 1. Gender histogram.</em></span></p>
+</div>
+<p>Figure 1 shows the gender histogram, it revels the difference in female and male samples. The number of samples is similar for low periods (1 day, 1 week), then it starts raising for male samples. From 1 year samples, the difference in frequency is stable.</p>
+<div class="figure align-center" id="id2">
+<a class="reference internal image-reference" href="images/2.png"><img alt="map to buried treasure" src="images/2.png" style="width: 500px; height: 400px;" /></a>
+<p class="caption"><span class="caption-text"><em>Figure 2. Age histogram.</em></span></p>
+</div>
+<p>In terms of age, samples are mostly distributed between 19 and 28 years old. The second interest group is the one for people under 19 years old. On the other hand, people over 28 years old represents less than the 50% of the second interest group. We also see the same behavior as in Gender histogram regarding sampling period.</p>
+<div class="figure align-center" id="id3">
+<a class="reference internal image-reference" href="images/3a.png"><img alt="map to buried treasure" src="images/3a.png" style="width: 500px; height: 400px;" /></a>
+<p class="caption"><span class="caption-text"><em>Figure 3a. Box-plot, score distributions by period of time</em></span></p>
+</div>
+<div class="figure align-center" id="id4">
+<a class="reference internal image-reference" href="images/3b.png"><img alt="map to buried treasure" src="images/3b.png" style="width: 500px; height: 200px;" /></a>
+<p class="caption"><span class="caption-text"><em>Figure 3b. Box-plot, score distributions by gender:</em></span></p>
+</div>
+<p>Figures 3a and 3b show the distribution of the score grouped by periods of time and gender. In general, the score is distributed between 5.5 and 8 points.  Means and medians are similar for samples greater than 3 months, below this number data is sparse and misclassification could be more possible. On the other hand, male scores tend to be more diverse than female ones, which would make difficult for prediction tasks, given that differences between pictures could be tiny.</p>
+<div class="figure align-center" id="id5">
+<a class="reference internal image-reference" href="images/4a.png"><img alt="map to buried treasure" src="images/4a.png" style="width: 500px; height: 400px;" /></a>
+<p class="caption"><span class="caption-text"><em>Figure 4a. Comments distribution:</em></span></p>
+</div>
+<div class="figure align-center" id="id6">
+<a class="reference internal image-reference" href="images/4b.png"><img alt="map to buried treasure" src="images/4b.png" style="width: 500px; height: 400px;" /></a>
+<p class="caption"><span class="caption-text"><em>Figure 4b. Comments distribution.</em></span></p>
+</div>
+<p>Figure 4 shows the patterns found concerning with comments. The number of comments does not seem to be affected by period of time, which is logic given that it should depends on factors closer to picture composition. It is outstanding the relation between comments-gender compared with score distributions due to score for males is more spread, however comments are highly clustered in less than 10 comments, while female picture comments are very diverse and get the highest numbers. This statement is clearer in Figure 4b, where we also confirm the relation comments-score (high score pictures tends to have more comments, and this is stronger for female pictures.)</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Welcome to Rateme’s Documentation</a></li>
+<li><a class="reference internal" href="#source-code-documentation">Source code documentation</a></li>
+<li><a class="reference internal" href="#summary">Summary</a></li>
+<li><a class="reference internal" href="#setup">Setup</a></li>
+<li><a class="reference internal" href="#running-options">Running options</a></li>
+<li><a class="reference internal" href="#results">Results</a></li>
+<li><a class="reference internal" href="#analysis">Analysis</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">Rateme  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Ege Can Ozer, Otto Hantula, Agustin Zuniga.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.4.
+    </div>
+  </body>
+</html>
