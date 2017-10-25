@@ -1,0 +1,154 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>tpot_classification module &#8212; Rateme  documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Rateme  documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-tpot_classification">
+<span id="tpot-classification-module"></span><h1>tpot_classification module<a class="headerlink" href="#module-tpot_classification" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="tpot_classification.TpotClassifier">
+<em class="property">class </em><code class="descclassname">tpot_classification.</code><code class="descname">TpotClassifier</code><span class="sig-paren">(</span><em>data_path</em>, <em>gabor=False</em>, <em>reduction_method=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tpot_classification.html#TpotClassifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tpot_classification.TpotClassifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="tpot_classification.TpotClassifier.build_filters">
+<code class="descname">build_filters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tpot_classification.html#TpotClassifier.build_filters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tpot_classification.TpotClassifier.build_filters" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a list of kernels in several orientations</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="tpot_classification.TpotClassifier.create_data">
+<em class="property">static </em><code class="descname">create_data</code><span class="sig-paren">(</span><em>data_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tpot_classification.html#TpotClassifier.create_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tpot_classification.TpotClassifier.create_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes a 64x64 grayscale image dataset of faces.
+:param data_path:</p>
+<blockquote>
+<div>Path to the folder that has the image folder and users.csv</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="tpot_classification.TpotClassifier.load">
+<code class="descname">load</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tpot_classification.html#TpotClassifier.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tpot_classification.TpotClassifier.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the fitted tpot models into usage</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tpot_classification.TpotClassifier.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>image</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tpot_classification.html#TpotClassifier.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tpot_classification.TpotClassifier.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predicts the attractiveness of a picture with a human in it.
+:param image:</p>
+<blockquote>
+<div>The image with the human in it.</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The prediction.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tpot_classification.TpotClassifier.process">
+<code class="descname">process</code><span class="sig-paren">(</span><em>img</em>, <em>filters</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tpot_classification.html#TpotClassifier.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tpot_classification.TpotClassifier.process" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the img filtered by the filter list</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tpot_classification.TpotClassifier.train">
+<code class="descname">train</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tpot_classification.html#TpotClassifier.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tpot_classification.TpotClassifier.train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses tpot to train a machine learning model to predict attractiveness of pictures of human faces.
+:return:</p>
+<blockquote>
+<div>Various accuracy measures.</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Rateme  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Ege Can Ozer, Otto Hantula, Agustin Zuniga.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.4.
+    </div>
+  </body>
+</html>

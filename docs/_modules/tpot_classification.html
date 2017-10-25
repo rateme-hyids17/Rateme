@@ -1,0 +1,277 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>tpot_classification &#8212; Rateme  documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Rateme  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for tpot_classification</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">from</span> <span class="nn">src.cascade_classifcation</span> <span class="k">import</span> <span class="n">find_face</span><span class="p">,</span> <span class="n">create_folder</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">tpot</span> <span class="k">import</span> <span class="n">TPOTRegressor</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.utils</span> <span class="k">import</span> <span class="n">shuffle</span>
+<span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="k">import</span> <span class="n">PCA</span>
+<span class="kn">from</span> <span class="nn">sklearn.discriminant_analysis</span> <span class="k">import</span> <span class="n">LinearDiscriminantAnalysis</span> <span class="k">as</span> <span class="n">LDA</span>
+<span class="kn">from</span> <span class="nn">sklearn.externals</span> <span class="k">import</span> <span class="n">joblib</span>
+
+<div class="viewcode-block" id="TpotClassifier"><a class="viewcode-back" href="../tpot_classification.html#tpot_classification.TpotClassifier">[docs]</a><span class="k">class</span> <span class="nc">TpotClassifier</span><span class="p">():</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_path</span><span class="p">,</span> <span class="n">gabor</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">reduction_method</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Trains a machine learning model with tpot,</span>
+<span class="sd">        which can then be used to predict attractiveness of pictures of humans.</span>
+<span class="sd">        :param data_path:</span>
+<span class="sd">            Path to the folder that has the image folder and users.csv</span>
+<span class="sd">        :param make_data_set:</span>
+<span class="sd">            Takes the images from the data folder, finds faces in them and transforms those into 64x64 grayscale images.</span>
+<span class="sd">            Making the data set takes a long time.</span>
+<span class="sd">        :param gabor:</span>
+<span class="sd">            This determines if gabor filter is used in training.</span>
+<span class="sd">        :param reduction_method:</span>
+<span class="sd">            Which method to use for dimensionality reduction. Supported types are &#39;pca&#39; and &#39;lda&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">regressor</span> <span class="o">=</span> <span class="n">TPOTRegressor</span><span class="p">(</span><span class="n">generations</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">population_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">config_dict</span><span class="o">=</span><span class="s1">&#39;TPOT light&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gabor</span> <span class="o">=</span> <span class="n">gabor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_path</span> <span class="o">=</span> <span class="n">data_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gabor</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_filters</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reduction_method</span> <span class="o">=</span> <span class="n">reduction_method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pca</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">2048</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lda</span> <span class="o">=</span> <span class="n">LDA</span><span class="p">()</span>
+
+<div class="viewcode-block" id="TpotClassifier.create_data"><a class="viewcode-back" href="../tpot_classification.html#tpot_classification.TpotClassifier.create_data">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">create_data</span><span class="p">(</span><span class="n">data_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Makes a 64x64 grayscale image dataset of faces.</span>
+<span class="sd">        :param data_path:</span>
+<span class="sd">            Path to the folder that has the image folder and users.csv</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">create_folder</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="s1">&#39;faces&#39;</span><span class="p">))</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">image_paths</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="s1">&#39;users.csv&#39;</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">row</span><span class="o">.</span><span class="n">gender</span> <span class="o">==</span> <span class="s1">&#39;M&#39;</span><span class="p">:</span>
+                <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">image_path</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">im</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="s1">&#39;images&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="p">))</span>
+                <span class="n">gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
+
+                <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">find_face</span><span class="p">(</span><span class="n">gray</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">roi_gray</span> <span class="o">=</span> <span class="n">gray</span><span class="p">[</span><span class="n">y</span><span class="p">:</span><span class="n">y</span> <span class="o">+</span> <span class="n">h</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span> <span class="o">+</span> <span class="n">w</span><span class="p">]</span>
+                <span class="n">resized</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">roi_gray</span><span class="p">,</span> <span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">))</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="s1">&#39;faces&#39;</span><span class="p">),</span> <span class="n">filename</span><span class="p">)</span>
+                <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">resized</span><span class="p">)</span>
+
+                <span class="n">image_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+                <span class="n">scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">score</span><span class="p">)</span>
+
+        <span class="n">new_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;image_path&#39;</span><span class="p">:</span> <span class="n">image_paths</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">:</span> <span class="n">scores</span><span class="p">})</span>
+        <span class="n">new_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="s1">&#39;faces.csv&#39;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="TpotClassifier.train"><a class="viewcode-back" href="../tpot_classification.html#tpot_classification.TpotClassifier.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Uses tpot to train a machine learning model to predict attractiveness of pictures of human faces.</span>
+<span class="sd">        :return:</span>
+<span class="sd">            Various accuracy measures.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_path</span><span class="p">,</span> <span class="s1">&#39;faces.csv&#39;</span><span class="p">))</span>
+
+        <span class="n">imgs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">image_path</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">IMREAD_GRAYSCALE</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gabor</span><span class="p">:</span>
+                <span class="n">img</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">)</span>
+
+            <span class="n">imgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">flatten</span><span class="p">()))</span>
+            <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">score</span><span class="p">)</span>
+
+        <span class="n">imgs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">imgs</span><span class="p">)</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+
+        <span class="n">imgs</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">shuffle</span><span class="p">(</span><span class="n">imgs</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+
+        <span class="n">train_len</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">imgs</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">)</span>
+        <span class="n">train_data</span> <span class="o">=</span> <span class="n">imgs</span><span class="p">[:</span><span class="n">train_len</span><span class="p">]</span>
+        <span class="n">train_labels</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[:</span><span class="n">train_len</span><span class="p">]</span>
+        <span class="n">test_data</span> <span class="o">=</span> <span class="n">imgs</span><span class="p">[</span><span class="n">train_len</span><span class="p">:]</span>
+        <span class="n">test_labels</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">train_len</span><span class="p">:]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduction_method</span> <span class="o">==</span> <span class="s1">&#39;pca&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pca</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_data</span><span class="p">)</span>
+            <span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pca</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_path</span><span class="p">,</span> <span class="s1">&#39;fitted_pca.pkl&#39;</span><span class="p">))</span>
+            <span class="n">train_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pca</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">train_data</span><span class="p">)</span>
+            <span class="n">test_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pca</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduction_method</span> <span class="o">==</span> <span class="s1">&#39;lda&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lda</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">train_labels</span><span class="p">))</span>
+            <span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lda</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_path</span><span class="p">,</span> <span class="s1">&#39;fitted_lda.pkl&#39;</span><span class="p">))</span>
+            <span class="n">train_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lda</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">train_data</span><span class="p">)</span>
+            <span class="n">test_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lda</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">regressor</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_data</span><span class="p">,</span> <span class="n">train_labels</span><span class="p">)</span>
+        <span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regressor</span><span class="o">.</span><span class="n">fitted_pipeline_</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_path</span><span class="p">,</span> <span class="s1">&#39;fitted_tpot.pkl&#39;</span><span class="p">))</span>
+
+        <span class="c1"># Calculate test accuracy</span>
+        <span class="n">rounded_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">test_labels</span><span class="p">)</span>
+        <span class="n">preds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">regressor</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
+        <span class="n">rounded_preds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">preds</span><span class="p">)</span>
+        <span class="n">accuracy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">rounded_labels</span> <span class="o">==</span> <span class="n">rounded_preds</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">rounded_labels</span><span class="p">)</span>
+
+
+        <span class="c1"># Calculate within 1 accuracy</span>
+        <span class="n">dists</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">test_labels</span> <span class="o">-</span> <span class="n">preds</span><span class="p">)</span>
+        <span class="n">close</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dists</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">within_1_accuracy</span> <span class="o">=</span> <span class="n">close</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">dists</span><span class="p">)</span>
+
+        <span class="n">mean_sqrt_error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">regressor</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">test_data</span><span class="p">,</span> <span class="n">test_labels</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">accuracy</span><span class="p">,</span> <span class="n">within_1_accuracy</span><span class="p">,</span> <span class="n">mean_sqrt_error</span></div>
+
+<div class="viewcode-block" id="TpotClassifier.predict"><a class="viewcode-back" href="../tpot_classification.html#tpot_classification.TpotClassifier.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Predicts the attractiveness of a picture with a human in it.</span>
+<span class="sd">        :param image:</span>
+<span class="sd">            The image with the human in it.</span>
+<span class="sd">        :return:</span>
+<span class="sd">            The prediction.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">find_face</span><span class="p">(</span><span class="n">gray</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gabor</span><span class="p">:</span>
+            <span class="n">gray</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">gray</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">)</span>
+
+        <span class="n">roi_gray</span> <span class="o">=</span> <span class="n">gray</span><span class="p">[</span><span class="n">y</span><span class="p">:</span><span class="n">y</span> <span class="o">+</span> <span class="n">h</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span> <span class="o">+</span> <span class="n">w</span><span class="p">]</span>
+        <span class="n">resized</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">roi_gray</span><span class="p">,</span> <span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">))</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduction_method</span> <span class="o">==</span> <span class="s1">&#39;pca&#39;</span><span class="p">:</span>
+            <span class="n">resized</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pca</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="n">resized</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduction_method</span> <span class="o">==</span> <span class="s1">&#39;lda&#39;</span><span class="p">:</span>
+            <span class="n">resized</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lda</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="n">resized</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">regressor</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">resized</span><span class="p">]))[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="TpotClassifier.build_filters"><a class="viewcode-back" href="../tpot_classification.html#tpot_classification.TpotClassifier.build_filters">[docs]</a>    <span class="k">def</span> <span class="nf">build_filters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns a list of kernels in several orientations</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">filters</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">ksize</span> <span class="o">=</span> <span class="mi">31</span>
+        <span class="k">for</span> <span class="n">theta</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">32</span><span class="p">):</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;ksize&#39;</span><span class="p">:(</span><span class="n">ksize</span><span class="p">,</span> <span class="n">ksize</span><span class="p">),</span> <span class="s1">&#39;sigma&#39;</span><span class="p">:</span><span class="mf">1.0</span><span class="p">,</span> <span class="s1">&#39;theta&#39;</span><span class="p">:</span><span class="n">theta</span><span class="p">,</span> <span class="s1">&#39;lambd&#39;</span><span class="p">:</span><span class="mf">15.0</span><span class="p">,</span>
+                      <span class="s1">&#39;gamma&#39;</span><span class="p">:</span><span class="mf">0.02</span><span class="p">,</span> <span class="s1">&#39;psi&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;ktype&#39;</span><span class="p">:</span><span class="n">cv2</span><span class="o">.</span><span class="n">CV_32F</span><span class="p">}</span>
+            <span class="n">kern</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">getGaborKernel</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+            <span class="n">kern</span> <span class="o">/=</span> <span class="mf">1.5</span><span class="o">*</span><span class="n">kern</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="n">filters</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">kern</span><span class="p">,</span><span class="n">params</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">filters</span></div>
+
+<div class="viewcode-block" id="TpotClassifier.process"><a class="viewcode-back" href="../tpot_classification.html#tpot_classification.TpotClassifier.process">[docs]</a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">filters</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the img filtered by the filter list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">accum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">kern</span><span class="p">,</span><span class="n">params</span> <span class="ow">in</span> <span class="n">filters</span><span class="p">:</span>
+            <span class="n">fimg</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">filter2D</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">CV_8UC3</span><span class="p">,</span> <span class="n">kern</span><span class="p">)</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">accum</span><span class="p">,</span> <span class="n">fimg</span><span class="p">,</span> <span class="n">accum</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">accum</span></div>
+
+<div class="viewcode-block" id="TpotClassifier.load"><a class="viewcode-back" href="../tpot_classification.html#tpot_classification.TpotClassifier.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loads the fitted tpot models into usage</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_path</span><span class="p">,</span> <span class="s1">&#39;fitted_tpot.pkl&#39;</span><span class="p">)):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">regressor</span><span class="o">.</span><span class="n">fitted_pipeline_</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_path</span><span class="p">,</span> <span class="s1">&#39;fitted_tpot.pkl&#39;</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_path</span><span class="p">,</span> <span class="s1">&#39;fitted_pca.pkl&#39;</span><span class="p">)):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pca</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_path</span><span class="p">,</span> <span class="s1">&#39;fitted_pca.pkl&#39;</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_path</span><span class="p">,</span> <span class="s1">&#39;fitted_lda.pkl&#39;</span><span class="p">)):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">lda</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_path</span><span class="p">,</span> <span class="s1">&#39;fitted_lda.pkl&#39;</span><span class="p">))</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Fitted model does not exist under Rateme/src&#39;</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Rateme  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Ege Can Ozer, Otto Hantula, Agustin Zuniga.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.4.
+    </div>
+  </body>
+</html>
