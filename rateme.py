@@ -47,9 +47,9 @@ if __name__ == "__main__":
         # Read the config
         config = configparser.RawConfigParser(allow_no_value=True)
         # Production code
-        # config.read('reddit_api.cfg')
+        config.read('reddit_api.cfg')
         # Test code
-        config.read('test_bot.cfg')
+        #config.read('test_bot.cfg')
 
         # Read the values into the variables
         client_id = config.get("redditapi", "client_id")
