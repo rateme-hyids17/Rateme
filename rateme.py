@@ -69,7 +69,7 @@ if __name__ == "__main__":
             raise Exception("Check your reddit_api.cfg. Reddit agent failed")
     elif mode == "tpot":
         # Tpot training here
-        classifier = TpotClassifier('data/', reduction_method='pca')
+        classifier = TpotClassifier('data/')
         # Check the train from scratch argument
         if train_from_scratch:
             # Train the model
