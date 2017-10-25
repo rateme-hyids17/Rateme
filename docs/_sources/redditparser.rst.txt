@@ -1,7 +1,0 @@
-redditparser module
-===================
-
-.. automodule:: redditparser
-    :members:
-    :undoc-members:
-    :show-inheritance:

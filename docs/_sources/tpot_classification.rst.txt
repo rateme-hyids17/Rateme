@@ -1,7 +1,0 @@
-tpot\_classification module
-===========================
-
-.. automodule:: tpot_classification
-    :members:
-    :undoc-members:
-    :show-inheritance:
