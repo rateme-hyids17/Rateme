@@ -1,0 +1,7 @@
+NN\_classifier module
+=====================
+
+.. automodule:: NN_classifier
+    :members:
+    :undoc-members:
+    :show-inheritance:

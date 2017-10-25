@@ -1,0 +1,173 @@
+.. Rateme documentation master file, created by
+   sphinx-quickstart on Wed Oct 25 12:50:53 2017.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+
+Welcome to Rateme's Documentation
+=================================
+	     
+Source code documentation
+==================
+
+Rateme's API can be found at:
+
+* :ref:`modindex`
+* :ref:`genindex`
+
+
+Summary
+=======
+* Goal
+* Methods we used
+* Results we get
+* Refer to analysis
+* Some future work
+
+
+Setup
+=====
+Rateme can be installed from scratch using the following commands:
+::
+    git clone https://github.com/rateme-hyids17/Rateme.git
+    cd Rateme
+    pip install -r requirements.txt
+
+**We have tested our program in:**
+
+* Linux Ubuntu 16.x, 17.x, MacOS Sierra
+* Python 3.5.x 64 bits (tensorflow requires 64bits)
+
+We anticipate that the program also works in other OS(s), but there might be some problems due to 3rd party python package installations. For example, in Windows some of the modules require installation by wheel (pip fails).
+
+**Reddit API**
+
+In order to scrap data from reddit, you must have an access to Reddit API. Once you have it, you have to fill the required fields in ``reddit_api.cfg`` inside the Rateme folder.
+
+This tutorial presents the procedure to get the Reddit API access `Reddit API <http://pythonforengineers.com/build-a-reddit-bot-part-1/>`_.
+
+Running options
+===============
+User can check all the available options using:
+::
+        python rateme.py -h
+
+This will show all the available arguments and values for usage:
+::
+        usage: rateme.py [-h] [-q QUERY_LEVEL] [-a APPLICATION_MODE] [-i IMAGE] [-t]
+
+        optional arguments:
+         -h, --help
+                   show this help message and exit
+         
+         -q QUERY_LEVEL, --query_level QUERY_LEVEL
+                   The query level for scraping submissions from reddit/r/Rateme. (DEFAULT: -q 1year)
+                   Available values: 1day, 1week, 1month, 3months, 6months, 1year, 3years.
+                                                                            
+         -a APPLICATION_MODE, --application_mode APPLICATION_MODE
+                   Choose application mode to perform. (DEFAULT: -a scrap)
+                   Available values: scrap, tpot, nn.
+                                                                                                                              
+         -i IMAGE, --image IMAGE
+                   Image path to be predicted.
+         
+         -t, --train_scratch
+                   Train tpot from scratch.
+
+
+
+**Examples:**
+
+The following will scrap 3 years of data from reddit.com/r/Rateme subreddit:
+::
+        python rateme.py -a scrap -q 3years
+
+Second example will train tpot pipeline from scratch and it will predict on given image:
+::
+        python rateme.py -a tpot -t -i image/test.jpg
+
+Third example will predict the given image using already fitted pipeline in tpot:
+::
+        python rateme.py -a tpot -i image/test.jpg
+
+Last example will predict the given image using Neural Network:
+::
+        python rateme.py -a nn -i image/test.jpg
+
+Results
+=======
+Our approach gives this result, here are some future considerations.
+
+Analysis
+========
+
+We have collected information from users for different periods of time:      
+    •	1 day
+    •	1 week
+    •	1 month
+    •	3 months
+    •	6 months
+    •	1 year
+    •	3 years
+    
+We started analysing the original data distributions to identify common patterns, outliers and the minimum number of samples necessary to perform the prediction.
+
+.. figure:: images/1.png
+   :width: 500px
+   :height: 400px   
+   :align: center
+   :alt: map to buried treasure
+   
+   *Figure 1. Gender histogram.*
+
+Figure 1 shows the gender histogram, it revels the difference in female and male samples. The number of samples is similar for low periods (1 day, 1 week), then it starts raising for male samples. From 1 year samples, the difference in frequency is stable.
+
+.. figure:: images/2.png
+   :width: 500px
+   :height: 400px   
+   :align: center
+   :alt: map to buried treasure
+   
+   *Figure 2. Age histogram.*
+
+In terms of age, samples are mostly distributed between 19 and 28 years old. The second interest group is the one for people under 19 years old. On the other hand, people over 28 years old represents less than the 50% of the second interest group. We also see the same behavior as in Gender histogram regarding sampling period. 
+
+.. figure:: images/3a.png
+   :width: 500px
+   :height: 400px   
+   :align: center
+   :alt: map to buried treasure
+   
+   *Figure 3a. Box-plot, score distributions by period of time*
+
+.. figure:: images/3b.png
+   :width: 500px
+   :height: 200px   
+   :align: center
+   :alt: map to buried treasure
+   
+   *Figure 3b. Box-plot, score distributions by gender:*
+
+Figures 3a and 3b show the distribution of the score grouped by periods of time and gender. In general, the score is distributed between 5.5 and 8 points.  Means and medians are similar for samples greater than 3 months, below this number data is sparse and misclassification could be more possible. On the other hand, male scores tend to be more diverse than female ones, which would make difficult for prediction tasks, given that differences between pictures could be tiny.
+
+.. figure:: images/4a.png
+   :width: 500px
+   :height: 400px   
+   :align: center
+   :alt: map to buried treasure
+   
+   *Figure 4a. Comments distribution:*
+
+.. figure:: images/4b.png
+   :width: 500px
+   :height: 400px   
+   :align: center
+   :alt: map to buried treasure
+   
+   *Figure 4b. Comments distribution.*
+
+Figure 4 shows the patterns found concerning with comments. The number of comments does not seem to be affected by period of time, which is logic given that it should depends on factors closer to picture composition. It is outstanding the relation between comments-gender compared with score distributions due to score for males is more spread, however comments are highly clustered in less than 10 comments, while female picture comments are very diverse and get the highest numbers. This statement is clearer in Figure 4b, where we also confirm the relation comments-score (high score pictures tends to have more comments, and this is stronger for female pictures.)

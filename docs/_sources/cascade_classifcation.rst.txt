@@ -1,0 +1,7 @@
+cascade\_classifcation module
+=============================
+
+.. automodule:: cascade_classifcation
+    :members:
+    :undoc-members:
+    :show-inheritance:
