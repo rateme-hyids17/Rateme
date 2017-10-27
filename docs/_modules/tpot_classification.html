@@ -57,20 +57,17 @@
 <span class="kn">from</span> <span class="nn">sklearn.externals</span> <span class="k">import</span> <span class="n">joblib</span>
 
 <div class="viewcode-block" id="TpotClassifier"><a class="viewcode-back" href="../tpot_classification.html#tpot_classification.TpotClassifier">[docs]</a><span class="k">class</span> <span class="nc">TpotClassifier</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Trains a machine learning model with tpot,</span>
+<span class="sd">    which can then be used to predict attractiveness of pictures of humans.</span>
+
+<span class="sd">    :param data_path: Path to the folder that has the image folder and users.csv</span>
+<span class="sd">    :param make_data_set: Takes the images from the data folder, finds faces in them \</span>
+<span class="sd">    and transforms those into 64x64 grayscale images. Making the data set takes a long time.</span>
+<span class="sd">    :param gabor: This determines if gabor filter is used in training.</span>
+<span class="sd">    :param reduction_method: Which method to use for dimensionality reduction. Supported types are &#39;pca&#39; and &#39;lda&#39;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_path</span><span class="p">,</span> <span class="n">gabor</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">reduction_method</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Trains a machine learning model with tpot,</span>
-<span class="sd">        which can then be used to predict attractiveness of pictures of humans.</span>
-<span class="sd">        :param data_path:</span>
-<span class="sd">            Path to the folder that has the image folder and users.csv</span>
-<span class="sd">        :param make_data_set:</span>
-<span class="sd">            Takes the images from the data folder, finds faces in them and transforms those into 64x64 grayscale images.</span>
-<span class="sd">            Making the data set takes a long time.</span>
-<span class="sd">        :param gabor:</span>
-<span class="sd">            This determines if gabor filter is used in training.</span>
-<span class="sd">        :param reduction_method:</span>
-<span class="sd">            Which method to use for dimensionality reduction. Supported types are &#39;pca&#39; and &#39;lda&#39;.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">regressor</span> <span class="o">=</span> <span class="n">TPOTRegressor</span><span class="p">(</span><span class="n">generations</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">population_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">config_dict</span><span class="o">=</span><span class="s1">&#39;TPOT light&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gabor</span> <span class="o">=</span> <span class="n">gabor</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data_path</span> <span class="o">=</span> <span class="n">data_path</span>
@@ -84,8 +81,8 @@
 <div class="viewcode-block" id="TpotClassifier.create_data"><a class="viewcode-back" href="../tpot_classification.html#tpot_classification.TpotClassifier.create_data">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">create_data</span><span class="p">(</span><span class="n">data_path</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Makes a 64x64 grayscale image dataset of faces.</span>
-<span class="sd">        :param data_path:</span>
-<span class="sd">            Path to the folder that has the image folder and users.csv</span>
+
+<span class="sd">        :param data_path: Path to the folder that has the image folder and users.csv</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">create_folder</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="s1">&#39;faces&#39;</span><span class="p">))</span>
         <span class="n">scores</span> <span class="o">=</span> <span class="p">[]</span>
@@ -114,8 +111,8 @@
 <div class="viewcode-block" id="TpotClassifier.train"><a class="viewcode-back" href="../tpot_classification.html#tpot_classification.TpotClassifier.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Uses tpot to train a machine learning model to predict attractiveness of pictures of human faces.</span>
-<span class="sd">        :return:</span>
-<span class="sd">            Various accuracy measures.</span>
+
+<span class="sd">        :return: Various accuracy measures.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_path</span><span class="p">,</span> <span class="s1">&#39;faces.csv&#39;</span><span class="p">))</span>
 
@@ -175,10 +172,9 @@
 <div class="viewcode-block" id="TpotClassifier.predict"><a class="viewcode-back" href="../tpot_classification.html#tpot_classification.TpotClassifier.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Predicts the attractiveness of a picture with a human in it.</span>
-<span class="sd">        :param image:</span>
-<span class="sd">            The image with the human in it.</span>
-<span class="sd">        :return:</span>
-<span class="sd">            The prediction.</span>
+
+<span class="sd">        :param image: The image with the human in it.</span>
+<span class="sd">        :return: The prediction.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
         <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">find_face</span><span class="p">(</span><span class="n">gray</span><span class="p">)</span>
@@ -212,7 +208,11 @@
         <span class="k">return</span> <span class="n">filters</span></div>
 
 <div class="viewcode-block" id="TpotClassifier.process"><a class="viewcode-back" href="../tpot_classification.html#tpot_classification.TpotClassifier.process">[docs]</a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">filters</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; returns the img filtered by the filter list</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the img filtered by the filter list.</span>
+
+<span class="sd">        :param img: Image to be filtered.</span>
+<span class="sd">        :param filters: The gabor filters to be used.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">accum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">kern</span><span class="p">,</span><span class="n">params</span> <span class="ow">in</span> <span class="n">filters</span><span class="p">:</span>
@@ -271,7 +271,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2017, Ege Can Ozer, Otto Hantula, Agustin Zuniga.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
     </div>
   </body>
 </html>

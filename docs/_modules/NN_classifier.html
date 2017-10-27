@@ -50,15 +50,13 @@
 <span class="kn">import</span> <span class="nn">cv2</span>
 
 <div class="viewcode-block" id="NeuralClassifier"><a class="viewcode-back" href="../NN_classifier.html#NN_classifier.NeuralClassifier">[docs]</a><span class="k">class</span> <span class="nc">NeuralClassifier</span><span class="p">():</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">network_path</span><span class="p">,</span> <span class="n">label_path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Uses a neural network to predict attractiveness of a picture of a human.</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Uses a neural network to predict attractiveness of a picture of a human.</span>
 
-<span class="sd">        :param network_path:</span>
-<span class="sd">            Path to the saved neural network.</span>
-<span class="sd">        :param label_path:</span>
-<span class="sd">            Path to the label text file.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">    :param network_path: Path to the saved neural network.</span>
+<span class="sd">    :param label_path: Path to the label text file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">network_path</span><span class="p">,</span> <span class="n">label_path</span><span class="p">):</span>
         <span class="c1"># Get labels</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">tf</span><span class="o">.</span><span class="n">gfile</span><span class="o">.</span><span class="n">GFile</span><span class="p">(</span><span class="n">network_path</span><span class="p">)]</span>
 
@@ -72,7 +70,11 @@
 
 
 <div class="viewcode-block" id="NeuralClassifier.predict"><a class="viewcode-back" href="../NN_classifier.html#NN_classifier.NeuralClassifier.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Reads an image and returns a list of labels and scores in descending order.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads an image and returns a list of labels and scores in descending order.</span>
+
+<span class="sd">        :param image: The image to score.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Run classification</span>
         <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span> <span class="k">as</span> <span class="n">sess</span><span class="p">:</span>
@@ -133,7 +135,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2017, Ege Can Ozer, Otto Hantula, Agustin Zuniga.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
     </div>
   </body>
 </html>

@@ -49,10 +49,31 @@
 <dt id="NN_classifier.NeuralClassifier">
 <em class="property">class </em><code class="descclassname">NN_classifier.</code><code class="descname">NeuralClassifier</code><span class="sig-paren">(</span><em>network_path</em>, <em>label_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/NN_classifier.html#NeuralClassifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#NN_classifier.NeuralClassifier" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Uses a neural network to predict attractiveness of a picture of a human.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>network_path</strong> – Path to the saved neural network.</li>
+<li><strong>label_path</strong> – Path to the label text file.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="NN_classifier.NeuralClassifier.predict">
 <code class="descname">predict</code><span class="sig-paren">(</span><em>image</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/NN_classifier.html#NeuralClassifier.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#NN_classifier.NeuralClassifier.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads an image and returns a list of labels and scores in descending order.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>image</strong> – The image to score.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
@@ -93,7 +114,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2017, Ege Can Ozer, Otto Hantula, Agustin Zuniga.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
     </div>
   </body>
 </html>

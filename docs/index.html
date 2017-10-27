@@ -137,6 +137,7 @@
 <p>First we tried to retrain the last layer of a neural network called Inception-v3 (<a class="reference external" href="https://www.tensorflow.org/tutorials/image_recognition">https://www.tensorflow.org/tutorials/image_recognition</a>), that is trained to recognize a 1000 different object classes in images. We used a retrainer provided by TensorFlow for the task (<a class="reference external" href="https://www.tensorflow.org/tutorials/image_retraining">https://www.tensorflow.org/tutorials/image_retraining</a>). The images were divided into classes from 3 to 9 based on the rounded rating. Classes 1, 2 and 10 were omitted due to lack of samples. The resulting neural network got a 20% test accuracy, which wasn’t great, but still better than a completely random guess of 14%.</p>
 <p>We also tried if tpot could find a good regressor for the task. For this we extracted the faces from the images using a Haar Cascades (<a class="reference external" href="https://docs.opencv.org/master/d7/d8b/tutorial_py_face_detection.html">https://docs.opencv.org/master/d7/d8b/tutorial_py_face_detection.html</a>) and transformed the faces into 64x64 grayscale images. For this data tpot achieved average distance from the true score of 1.31 in the test set. We also used the rounded prediction and compared it to the rounded true label to get a similar accuracy measure to the neural network, reaching 27%, which is way better than the network’s 20%. This might be due to overfitting though, because most of the images were concentrated in just a couple of classes (6, 7 and 8). The tpot’s chosen model was RidgeCV.</p>
 <p>In addition we experimented with dimensionality reduction on the data before learning with tpot, because a 64x64 grayscale image has 4096 features, and all of the are probably not that important. The reduction methods used were PCA (with 50, 1000 and 2048 components) and linear discriminant analysis, but both produced worse results than the raw data with all 4096 features.</p>
+<p>Lastly we tried applying Gabor filters on the images. Gabor filters have been used in texture analysis, so we thought they might help in extracting useful features. This didn’t improve results.</p>
 <p>Our next idea was to extract features, such as does the image have a smile, using Haar Cascades. Then we could do analysis of what kind of features attractive images tend to have. This failed however, because the Haar Cascades did a horrible job. Only the face detection really works and even then you have to select the largest face found, because the classifier finds faces in all kinds of weird places.</p>
 </div>
 <div class="section" id="analysis">
@@ -230,7 +231,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2017, Ege Can Ozer, Otto Hantula, Agustin Zuniga.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
     </div>
   </body>
 </html>

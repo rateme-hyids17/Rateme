@@ -3,15 +3,13 @@ from tensorflow.python.platform import gfile
 import cv2
 
 class NeuralClassifier():
-    def __init__(self, network_path, label_path):
-        """
-        Uses a neural network to predict attractiveness of a picture of a human.
+    """
+    Uses a neural network to predict attractiveness of a picture of a human.
 
-        :param network_path:
-            Path to the saved neural network.
-        :param label_path:
-            Path to the label text file.
-        """
+    :param network_path: Path to the saved neural network.
+    :param label_path: Path to the label text file.
+    """
+    def __init__(self, network_path, label_path):
         # Get labels
         self.labels = [line.rstrip() for line in tf.gfile.GFile(network_path)]
 
@@ -25,7 +23,11 @@ class NeuralClassifier():
 
 
     def predict(self, image):
-        """Reads an image and returns a list of labels and scores in descending order."""
+        """
+        Reads an image and returns a list of labels and scores in descending order.
+
+        :param image: The image to score.
+        """
 
         # Run classification
         with tf.Session() as sess:

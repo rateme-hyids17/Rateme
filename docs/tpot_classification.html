@@ -49,6 +49,22 @@
 <dt id="tpot_classification.TpotClassifier">
 <em class="property">class </em><code class="descclassname">tpot_classification.</code><code class="descname">TpotClassifier</code><span class="sig-paren">(</span><em>data_path</em>, <em>gabor=False</em>, <em>reduction_method=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tpot_classification.html#TpotClassifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tpot_classification.TpotClassifier" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Trains a machine learning model with tpot,
+which can then be used to predict attractiveness of pictures of humans.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>data_path</strong> – Path to the folder that has the image folder and users.csv</li>
+<li><strong>make_data_set</strong> – Takes the images from the data folder, finds faces in them     and transforms those into 64x64 grayscale images. Making the data set takes a long time.</li>
+<li><strong>gabor</strong> – This determines if gabor filter is used in training.</li>
+<li><strong>reduction_method</strong> – Which method to use for dimensionality reduction. Supported types are ‘pca’ and ‘lda’.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="tpot_classification.TpotClassifier.build_filters">
 <code class="descname">build_filters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tpot_classification.html#TpotClassifier.build_filters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tpot_classification.TpotClassifier.build_filters" title="Permalink to this definition">¶</a></dt>
@@ -58,10 +74,15 @@
 <dl class="staticmethod">
 <dt id="tpot_classification.TpotClassifier.create_data">
 <em class="property">static </em><code class="descname">create_data</code><span class="sig-paren">(</span><em>data_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tpot_classification.html#TpotClassifier.create_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tpot_classification.TpotClassifier.create_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Makes a 64x64 grayscale image dataset of faces.
-:param data_path:</p>
-<blockquote>
-<div>Path to the folder that has the image folder and users.csv</div></blockquote>
+<dd><p>Makes a 64x64 grayscale image dataset of faces.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data_path</strong> – Path to the folder that has the image folder and users.csv</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -81,15 +102,14 @@
 <dl class="method">
 <dt id="tpot_classification.TpotClassifier.predict">
 <code class="descname">predict</code><span class="sig-paren">(</span><em>image</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tpot_classification.html#TpotClassifier.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tpot_classification.TpotClassifier.predict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Predicts the attractiveness of a picture with a human in it.
-:param image:</p>
-<blockquote>
-<div>The image with the human in it.</div></blockquote>
+<dd><p>Predicts the attractiveness of a picture with a human in it.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The prediction.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>image</strong> – The image with the human in it.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The prediction.</td>
 </tr>
 </tbody>
 </table>
@@ -98,16 +118,33 @@
 <dl class="method">
 <dt id="tpot_classification.TpotClassifier.process">
 <code class="descname">process</code><span class="sig-paren">(</span><em>img</em>, <em>filters</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tpot_classification.html#TpotClassifier.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tpot_classification.TpotClassifier.process" title="Permalink to this definition">¶</a></dt>
-<dd><p>returns the img filtered by the filter list</p>
+<dd><p>Returns the img filtered by the filter list.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>img</strong> – Image to be filtered.</li>
+<li><strong>filters</strong> – The gabor filters to be used.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="tpot_classification.TpotClassifier.train">
 <code class="descname">train</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tpot_classification.html#TpotClassifier.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tpot_classification.TpotClassifier.train" title="Permalink to this definition">¶</a></dt>
-<dd><p>Uses tpot to train a machine learning model to predict attractiveness of pictures of human faces.
-:return:</p>
-<blockquote>
-<div>Various accuracy measures.</div></blockquote>
+<dd><p>Uses tpot to train a machine learning model to predict attractiveness of pictures of human faces.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Various accuracy measures.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
@@ -148,7 +185,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2017, Ege Can Ozer, Otto Hantula, Agustin Zuniga.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
     </div>
   </body>
 </html>

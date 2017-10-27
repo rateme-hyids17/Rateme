@@ -10,20 +10,17 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from sklearn.externals import joblib
 
 class TpotClassifier():
+    """
+    Trains a machine learning model with tpot,
+    which can then be used to predict attractiveness of pictures of humans.
+
+    :param data_path: Path to the folder that has the image folder and users.csv
+    :param make_data_set: Takes the images from the data folder, finds faces in them \
+    and transforms those into 64x64 grayscale images. Making the data set takes a long time.
+    :param gabor: This determines if gabor filter is used in training.
+    :param reduction_method: Which method to use for dimensionality reduction. Supported types are 'pca' and 'lda'.
+    """
     def __init__(self, data_path, gabor=False, reduction_method=None):
-        """
-        Trains a machine learning model with tpot,
-        which can then be used to predict attractiveness of pictures of humans.
-        :param data_path:
-            Path to the folder that has the image folder and users.csv
-        :param make_data_set:
-            Takes the images from the data folder, finds faces in them and transforms those into 64x64 grayscale images.
-            Making the data set takes a long time.
-        :param gabor:
-            This determines if gabor filter is used in training.
-        :param reduction_method:
-            Which method to use for dimensionality reduction. Supported types are 'pca' and 'lda'.
-        """
         self.regressor = TPOTRegressor(generations=5, population_size=20, verbosity=2, config_dict='TPOT light')
         self.gabor = gabor
         self.data_path = data_path
@@ -37,8 +34,8 @@ class TpotClassifier():
     @staticmethod
     def create_data(data_path):
         """Makes a 64x64 grayscale image dataset of faces.
-        :param data_path:
-            Path to the folder that has the image folder and users.csv
+
+        :param data_path: Path to the folder that has the image folder and users.csv
         """
         create_folder(os.path.join(data_path, 'faces'))
         scores = []
@@ -67,8 +64,8 @@ class TpotClassifier():
     def train(self):
         """
         Uses tpot to train a machine learning model to predict attractiveness of pictures of human faces.
-        :return:
-            Various accuracy measures.
+
+        :return: Various accuracy measures.
         """
         df = pd.read_csv(os.path.join(self.data_path, 'faces.csv'))
 
@@ -128,10 +125,9 @@ class TpotClassifier():
     def predict(self, image):
         """
         Predicts the attractiveness of a picture with a human in it.
-        :param image:
-            The image with the human in it.
-        :return:
-            The prediction.
+
+        :param image: The image with the human in it.
+        :return: The prediction.
         """
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         x, y, w, h = find_face(gray)
@@ -165,7 +161,11 @@ class TpotClassifier():
         return filters
 
     def process(self, img, filters):
-        """ returns the img filtered by the filter list
+        """
+        Returns the img filtered by the filter list.
+
+        :param img: Image to be filtered.
+        :param filters: The gabor filters to be used.
         """
         accum = np.zeros_like(img)
         for kern,params in filters:
