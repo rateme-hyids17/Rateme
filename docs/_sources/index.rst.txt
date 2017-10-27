@@ -32,7 +32,7 @@ RateMe’ design allows to perform a scientific look evaluation. The score is ca
 
 **Analysis and results**
 
-First results reveal the complexity of performing a good evaluation, given the highly different kind of images uploaded by the users. The accuracy of the results was enhanced when we focused just on user’s face and applying gray-scale filter. The analysis also exposed the relation between photo’s comments and score given the gender.  
+First results reveal the complexity of performing a good evaluation, given the highly different kind of images uploaded by the users. The analysis also exposed the relation between photo’s comments and score given the gender.  
 
 **Future work**
 
